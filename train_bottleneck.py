@@ -14,9 +14,9 @@ from yolo3.utils import get_random_data
 
 
 def _main():
-    annotation_path = 'train.txt'
+    annotation_path = '../resized_images/custom_annotations.txt'
     log_dir = 'logs/000/'
-    classes_path = 'model_data/coco_classes.txt'
+    classes_path = '../images/classes.txt'
     anchors_path = 'model_data/yolo_anchors.txt'
     class_names = get_classes(classes_path)
     num_classes = len(class_names)
@@ -25,7 +25,7 @@ def _main():
     input_shape = (416,416) # multiple of 32, hw
 
     model, bottleneck_model, last_layer_model = create_model(input_shape, anchors, num_classes,
-            freeze_body=2, weights_path='model_data/yolo_weights.h5') # make sure you know what you freeze
+            freeze_body=2, weights_path='model_data/yolo.h5') # make sure you know what you freeze
 
     logging = TensorBoard(log_dir=log_dir)
     checkpoint = ModelCheckpoint(log_dir + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5',
@@ -52,7 +52,7 @@ def _main():
             bottlenecks=bottleneck_model.predict_generator(data_generator_wrapper(lines, batch_size, input_shape, anchors, num_classes, random=False, verbose=True),
              steps=(len(lines)//batch_size)+1, max_queue_size=1)
             np.savez("bottlenecks.npz", bot0=bottlenecks[0], bot1=bottlenecks[1], bot2=bottlenecks[2])
-    
+
         # load bottleneck features from file
         dict_bot=np.load("bottlenecks.npz")
         bottlenecks_train=[dict_bot["bot0"][:num_train], dict_bot["bot1"][:num_train], dict_bot["bot2"][:num_train]]
@@ -70,7 +70,7 @@ def _main():
                 epochs=30,
                 initial_epoch=0, max_queue_size=1)
         model.save_weights(log_dir + 'trained_weights_stage_0.h5')
-        
+
         # train last layers with random augmented data
         model.compile(optimizer=Adam(lr=1e-3), loss={
             # use custom yolo_loss Lambda layer.
@@ -124,7 +124,7 @@ def get_anchors(anchors_path):
 
 
 def create_model(input_shape, anchors, num_classes, load_pretrained=True, freeze_body=2,
-            weights_path='model_data/yolo_weights.h5'):
+            weights_path='model_data/yolo.h5'):
     '''create the training model'''
     K.clear_session() # get a new session
     image_input = Input(shape=(None, None, 3))
@@ -153,7 +153,7 @@ def create_model(input_shape, anchors, num_classes, load_pretrained=True, freeze
     bottleneck_model = Model([model_body.input, *y_true], [out1, out2, out3])
 
     # create last layer model of last layers from yolo model
-    in0 = Input(shape=bottleneck_model.output[0].shape[1:].as_list()) 
+    in0 = Input(shape=bottleneck_model.output[0].shape[1:].as_list())
     in1 = Input(shape=bottleneck_model.output[1].shape[1:].as_list())
     in2 = Input(shape=bottleneck_model.output[2].shape[1:].as_list())
     last_out0=model_body.layers[249](in0)
@@ -165,7 +165,7 @@ def create_model(input_shape, anchors, num_classes, load_pretrained=True, freeze
         [*model_last.output, *y_true])
     last_layer_model = Model([in0,in1,in2, *y_true], model_loss_last)
 
-    
+
     model_loss = Lambda(yolo_loss, output_shape=(1,), name='yolo_loss',
         arguments={'anchors': anchors, 'num_classes': num_classes, 'ignore_thresh': 0.5})(
         [*model_body.output, *y_true])

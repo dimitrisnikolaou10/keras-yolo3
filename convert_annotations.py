@@ -14,7 +14,6 @@ def convert_from_path(start_path="../images/*.txt", end_path='../resized_images/
         for line in Lines:
             all_items = line.split(" ")
 
-            print(all_items)
             ann_class, center_x, center_y, width, height = all_items[0], all_items[1], all_items[2], all_items[3], all_items[4]
 
             center_x = math.floor(416*float(center_x))
