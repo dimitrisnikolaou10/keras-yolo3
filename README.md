@@ -15,7 +15,7 @@ An application of the Keras implementation as created by https://github.com/qqww
 ### Part 1
 I applied the pre trained YOLOv3 model to identify humans within the basketball court. Model performed quite well as you can see in the GIF below. This application was fairly easy, all that was required was to download the pretrained weights and configurations and load the video in.
 
-[INSERT GIF]
+![Alt Text](https://github.com/dimitrisnikolaou10/keras-yolo3/blob/master/predictions/yolo-pretrained.gif)
 
 ### Part 2
 Tried to classify all humans on the court in one of three classes (Team 1, Team 2, Referee). This was significantly harder, these were the steps I followed:
@@ -29,4 +29,4 @@ Tried to classify all humans on the court in one of three classes (Team 1, Team 
 
 As you can see the model is just about showing some signs of a learning behaviour. Confidence is still quite low and resulting predictions way too noisy. More images would definitely be of value here and perhaps some feature engineering (eg. first detect all humans and only after that's done classify them). Some more powerful models would also lead to a significant improvement.
 
-[INSERT GIF]
+![Alt Text](https://github.com/dimitrisnikolaou10/keras-yolo3/blob/master/predictions/yolo-custom.gif)
