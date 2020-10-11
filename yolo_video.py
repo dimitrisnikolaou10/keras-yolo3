@@ -6,6 +6,8 @@ from PIL import Image
 def detect_img(yolo):
     while True:
         img = input('Input image filename:')
+        frame = img.split("/")[-1]
+        store_filepath = "../video_frames_output/" + frame
         try:
             image = Image.open(img)
         except:
@@ -13,8 +15,21 @@ def detect_img(yolo):
             continue
         else:
             r_image = yolo.detect_image(image)
+            r_image.save(store_filepath, "JPEG")
             r_image.show()
     yolo.close_session()
+
+def detect_multiple_images(yolo):
+    input_path = "../../../playground/data_all/frame"
+    output_path = "../video_frames_output/frame"
+    start_frame=28
+    end_frame=228
+    for i in range(start_frame, end_frame+1):
+        name = input_path + str(i) + ".jpg"
+        image = Image.open(name)
+        r_image = yolo.detect_image(image)
+        r_image.save(output_path + str(i) + ".jpg", "JPEG")
+
 
 FLAGS = None
 
@@ -72,7 +87,8 @@ if __name__ == '__main__':
         print("Image detection mode")
         if "input" in FLAGS:
             print(" Ignoring remaining command line arguments: " + FLAGS.input + "," + FLAGS.output)
-        detect_img(YOLO(**vars(FLAGS)))
+        #detect_img(YOLO(**vars(FLAGS)))
+        detect_multiple_images(YOLO(**vars(FLAGS)))
     elif "input" in FLAGS:
         detect_video(YOLO(**vars(FLAGS)), FLAGS.input, FLAGS.output)
     else:

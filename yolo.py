@@ -23,9 +23,9 @@ import tensorflow as tf
 class YOLO(object):
     _defaults = {
         "model_path": 'logs/000/trained_weights_final.h5',
-        "anchors_path": 'model_data/yolo_anchors.txt',
-        "classes_path": '../classes_only_humans.txt',
-        "score" : 0.3,
+        "anchors_path": 'model_data/tiny_yolo_anchors.txt',
+        "classes_path": '../classes.txt',
+        "score" : 0.2,
         "iou" : 0.45,
         "model_image_size" : (416, 416),
         "gpu_num" : 1,
@@ -83,15 +83,18 @@ class YOLO(object):
         print('{} model, anchors, and classes loaded.'.format(model_path))
 
         # Generate colors for drawing bounding boxes.
-        hsv_tuples = [(x / len(self.class_names), 1., 1.)
-                      for x in range(len(self.class_names))]
-        self.colors = list(map(lambda x: colorsys.hsv_to_rgb(*x), hsv_tuples))
-        self.colors = list(
-            map(lambda x: (int(x[0] * 255), int(x[1] * 255), int(x[2] * 255)),
-                self.colors))
-        np.random.seed(10101)  # Fixed seed for consistent colors across runs.
-        np.random.shuffle(self.colors)  # Shuffle colors to decorrelate adjacent classes.
-        np.random.seed(None)  # Reset seed to default.
+        # hsv_tuples = [(x / len(self.class_names), 1., 1.)
+        #               for x in range(len(self.class_names))]
+        # self.colors = list(map(lambda x: colorsys.hsv_to_rgb(*x), hsv_tuples))
+        # self.colors = list(
+        #     map(lambda x: (int(x[0] * 255), int(x[1] * 255), int(x[2] * 255)),
+        #         self.colors))
+        # np.random.seed(10101)  # Fixed seed for consistent colors across runs.
+        # np.random.shuffle(self.colors)  # Shuffle colors to decorrelate adjacent classes.
+        # np.random.seed(None)  # Reset seed to default.
+        self.colors = [(255,255,255), (255,0,0), (128,128,128), (128,128,128)]
+        print("Colours")
+        print(self.colors)
 
         # Generate output tensor targets for filtered bounding boxes.
         self.input_image_shape = K.placeholder(shape=(2, ))
@@ -129,8 +132,8 @@ class YOLO(object):
         print('Found {} boxes for {}'.format(len(out_boxes), 'img'))
 
         font = ImageFont.truetype(font='font/FiraMono-Medium.otf',
-                    size=np.floor(3e-2 * image.size[1] + 0.5).astype('int32'))
-        thickness = (image.size[0] + image.size[1]) // 300
+                    size=np.floor(2e-2 * image.size[1] + 0.25).astype('int32'))
+        thickness = (image.size[0] + image.size[1]) // 600
 
         for i, c in reversed(list(enumerate(out_classes))):
             predicted_class = self.class_names[c]
