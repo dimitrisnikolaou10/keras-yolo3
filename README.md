@@ -13,7 +13,7 @@ An application of the Keras implementation as created by https://github.com/qqww
 ## Description
 
 ### Part 1
-I applied the pre trained YOLOv3 model to identify humans within the basketball court. Model performed quite well as you can see in the GIF below. This application was fairly easy, all that was required was to download the pretrained weights and configurations and load the video in.
+I applied the pre trained YOLOv3 model to identify humans within the basketball court. Model performed quite well as you can see in the GIF below. This application was fairly easy, all that was required was to download the pretrained weights (based on COCO) and configurations and load the video in.
 
 ![Alt Text](https://github.com/dimitrisnikolaou10/keras-yolo3/blob/master/predictions/yolo-pretrained.gif)
 
@@ -27,6 +27,9 @@ Tried to classify all humans on the court in one of three classes (Team 1, Team 
   c. Variable learning rates, epochs
 4. Apply the prediction model based on different levels of confidence (ended up showing all boxes with 25%+ confidence)
 
-As you can see the model is just about showing some signs of a learning behaviour. Confidence is still quite low and resulting predictions way too noisy. More images would definitely be of value here and perhaps some feature engineering (eg. first detect all humans and only after that's done classify them). Some more powerful models would also lead to a significant improvement.
+As you can see the model is just about showing some signs of a learning behaviour. Confidence is still quite low and resulting predictions way too noisy. More images would definitely be of value here and perhaps some feature engineering (eg. first detect all humans and only after that's done classify them). Some more powerful models would also lead to a significant improvement (EfficientNet, deep ResNets etc)
 
 ![Alt Text](https://github.com/dimitrisnikolaou10/keras-yolo3/blob/master/predictions/yolo-custom.gif)
+
+### Part 3
+A more challenging objective would be to identify individual players. Steps would be identical but significantly more labelling would be required. If anyone is interested in teaming up to do this, hit me up!
