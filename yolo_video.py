@@ -23,7 +23,7 @@ def detect_multiple_images(yolo):
     input_path = "../../../playground/data_all/frame"
     output_path = "../video_frames_output/frame"
     start_frame=28
-    end_frame=228
+    end_frame=428
     for i in range(start_frame, end_frame+1):
         name = input_path + str(i) + ".jpg"
         image = Image.open(name)
